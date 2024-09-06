@@ -12,15 +12,22 @@ class TerminalInterface:
 Choose from the options below:
 1. Chapter Selection
 
-                    """)) != "exit":
+""")) != "exit":
             if user_input == "1":
-                self.choose_chapter()
+                return self.choose_chapter()
                 
     def choose_chapter(self):
-        while (user_input:=input("Choose a chapter number:\n")) != "exit":
+        while (user_input:=input("Choose a chapter number:\n")):
+            if user_input == "back":
+                return
+            
+            if user_input == "exit":
+                exit()
+                
             if not user_input.isdigit():
                 print("Invalid input. Please enter a number.")
                 continue
+            
             chapter_number = int(user_input)
             break
 
@@ -46,15 +53,22 @@ Choose from the options below:
             curs.execute(sql, (chapter_number,))
             word_bank = curs.fetchall()
             
-        print(word_bank)
-        self.choose_quantity(word_bank)
+        # print(word_bank)
+        return self.choose_quantity(word_bank)
         
     # eventually allow all
     def choose_quantity(self, word_bank):
-        while (user_input:=input("Choose a quantity:\n")) != "exit":
+        while (user_input:=input("Choose a quantity:\n")):
+            if user_input == "back":
+                return
+            
+            if user_input == "exit":
+                exit()
+            
             if not user_input.isdigit():
                 print("Invalid input. Please enter a number.")
                 continue
+            
             quantity = int(user_input)
             break
         
@@ -64,9 +78,10 @@ Choose from the options below:
             quantity = len(word_bank)
         
         selected_words = random.sample(word_bank, quantity)
-        print(selected_words)
-        # return selected_words
-        
+        # print(selected_words)
+        return selected_words
+    
+    
         
         
         

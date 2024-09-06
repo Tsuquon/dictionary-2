@@ -1,19 +1,25 @@
 
+import random
 from openai import OpenAI
 import pandas as pd
 import psycopg2
 from database_key import db_host, db_name, db_pass, db_user
 from terminal_interface import TerminalInterface
 
-def llm_prompt():
+def llm_prompt(def_word, usr_word):
     client = OpenAI()
     completion = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-mini",
         messages=[
-            {"role": "user", "content": "write a haiku about ai"}
+            {"role": "system", "content": "You are going to read off a tuple giving the kana and kanji (if available). The user will respond in english, and you will check if the definition matches closely enough to the given translation in the word bank"},
+            {"role": "system", "content": "The format of the tuple is structured as (kana, kanji (opt), pos, definition, chapter number)"},
+            {"role": "system", "content": f"The given word is {def_word}"},
+            {"role": "user", "content": f"Is the answer {usr_word}"}
         ]
     )
+    print(completion.choices[0].message.content)
     
+
     
 # probably move this into sql setup    
 def insert_into_database(df):
@@ -64,7 +70,14 @@ def clean_df() -> pd.DataFrame:
 
 def main():
     interface = TerminalInterface()
-    interface.input_interface()
+    word_bank = interface.input_interface()
+    # llm_prompt(word_bank)
+    random.shuffle(word_bank)
+    for word in word_bank:
+        user_input = input(f"Enter the translation for {word[0]}: ")
+        # print(word)
+        llm_prompt(word, user_input)
+    
     # df = clean_df()
     # insert_into_database(df)
 
