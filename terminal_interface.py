@@ -1,20 +1,74 @@
 from database_key import db_host, db_name, db_pass, db_user
 import psycopg2
 import random
+import prompts
+from getpass import getpass
 
 class TerminalInterface:
+    
     def __init__(self):
+        self.my_dict = {"1": self.write_english, "2": self.write_japanese, "3": self.have_conversation}
+
+    # strat 1
+    # fix this by changing NA into None 
+    def write_english(self):
+        word_bank = self.choose_chapter()
+        selected_words = self.choose_quantity(word_bank)
+        random.shuffle(selected_words)
+        for word in selected_words:
+            user_input = input(f"Enter the translation for {word[0]}{', ' if word[1] else ''}{word[1] if word[1] else ''}: ")
+            prompts.run_program(prompts.llm_prompt_eng, word, user_input)
+        
+    # strat 2
+    def write_japanese(self):
+        word_bank = self.choose_chapter()
+        selected_words = self.choose_quantity(word_bank)
+        random.shuffle(selected_words)
+        for word in selected_words:
+            user_input = input(f"Enter the translation for {word[3]}: ")
+            prompts.run_program(prompts.llm_prompt_jap, word, user_input)
+        
+    
+    def have_conversation(self):
         pass
     
+    def run_program(self):
         
-    def input_interface(self):
-        while (user_input:=input("""
+        return self.my_dict[self.choice_selection()]()
+        
+    def home_page(self):
+        
+        while user_input:=input(
+        """
+        Welcome to the Japanese learning program!
+        1. Login
+        2. Signup
+        
+        """
+        ):
+            match user_input:
+                case "1":
+                    return self.login()
+                    
+                case "2":
+                    return self.signup()
+                    
+        
+    def login(self):
+        pass
+    
+    def signup(self):
+        pass
+    
+    def choice_selection(self):
+        while (user_input:=input(
+            """
 Choose from the options below:
-1. Chapter Selection
+1. Translate Japanese to English
+2. Translate English to Japanese
 
-""")) != "exit":
-            if user_input == "1":
-                return self.choose_chapter()
+            """)) != "exit":
+            return user_input
                 
     def choose_chapter(self):
         while (user_input:=input("Choose a chapter number:\n")):
@@ -54,7 +108,8 @@ Choose from the options below:
             word_bank = curs.fetchall()
             
         # print(word_bank)
-        return self.choose_quantity(word_bank)
+        # return word_bank
+        return word_bank
         
     # eventually allow all
     def choose_quantity(self, word_bank):
