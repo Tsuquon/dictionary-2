@@ -4,7 +4,7 @@ from llm_response_format import LLMResponseFormat
 
 
 def run_program(function_name, *args):
-    function_name(*args)
+    return function_name(*args)
 
 def llm_prompt_eng(def_word, usr_word):
     client = OpenAI()
@@ -22,6 +22,7 @@ def llm_prompt_eng(def_word, usr_word):
     test = completion.choices[0].message.parsed
     print(test.response)
     print(test.answer_correct)
+    return test
     
 def llm_prompt_jap(def_word, usr_word):
     client = OpenAI()
@@ -39,3 +40,4 @@ def llm_prompt_jap(def_word, usr_word):
     test = completion.choices[0].message.parsed
     print(test.response)
     print(test.answer_correct)
+    return test
