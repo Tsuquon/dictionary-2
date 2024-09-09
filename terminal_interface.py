@@ -16,8 +16,11 @@ class TerminalInterface:
         selected_words = self.choose_quantity(word_bank)
         random.shuffle(selected_words)
         for word in selected_words:
+            prompts.convert_to_audio(word[0])
             user_input = input(f"Enter the translation for {word[0]}{', ' if word[1] else ''}{word[1] if word[1] else ''}: ")
-            prompts.run_program(prompts.llm_prompt_eng, word, user_input)
+            response = prompts.run_program(prompts.llm_prompt_eng, word, user_input)
+            if response.answer_correct is False:
+                selected_words.append(word)
         
     # strat 2
     def write_japanese(self):
@@ -26,8 +29,9 @@ class TerminalInterface:
         random.shuffle(selected_words)
         for word in selected_words:
             user_input = input(f"Enter the translation for {word[3]}: ")
-            prompts.run_program(prompts.llm_prompt_jap, word, user_input)
-        
+            response = prompts.run_program(prompts.llm_prompt_jap, word, user_input)
+            if response.answer_correct is False:
+                selected_words.append(word)    
     
     def have_conversation(self):
         pass
