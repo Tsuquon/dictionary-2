@@ -19,6 +19,7 @@ def run_program(function_name, *args):
 
     return function_name(*args)
 
+# program gives japanese word, user gives english translation
 def llm_prompt_eng(def_word, usr_word):
     # print(usr_word)
     client = OpenAI()

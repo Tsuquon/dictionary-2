@@ -6,8 +6,8 @@ st.title("Input Chooser")
 
 
 # eventually cache this data - also cache this connection
-@st.cache_data
-@st.cache_resource
+# @st.cache_data
+# @st.cache_resource
 def get_quantity_from_db(chapter_number):
 
     conn = st.connection("postgresql", type="sql")
@@ -47,12 +47,13 @@ def quantity(word_value=0):
     )
     
     return quantity
-    
+
 def render_button():
     if st.button("Submit"):
         if st.session_state.translation_type == "" or st.session_state.selected_quantity == 0:
             st.write("Please select a translation type and quantity.")
         else:
+
         # st.write("Button clicked!")
             st.switch_page("flash_card.py")
 
