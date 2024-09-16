@@ -20,15 +20,15 @@ def run_program(function_name, *args):
     return function_name(*args)
 
 def llm_prompt_eng(def_word, usr_word):
+    # print(usr_word)
     client = OpenAI()
     completion = client.beta.chat.completions.parse(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "You are going to read off a tuple giving the kana and kanji (if available, else provide nothing). The user will respond in english, and you will check if the definition matches closely enough to the given translation in the word bank"},
             {"role": "system", "content": "The format of the tuple is structured as (kana, kanji (opt), pos, definition, chapter number)"},
             {"role": "system", "content": "give your response, followed by boolean if the user provided answer is correct or not"},
-            {"role": "system", "content": f"The given word is {def_word}."},
-            {"role": "user", "content": f"Is the answer in english is {usr_word}"}
+            # {"role": "system", "content": f"The given word is {def_word}."},
+            {"role": "user", "content": f"My answer is '{usr_word}'. Does this closely match {def_word}?"}
         ],
         response_format=LLMResponseFormat,
         timeout=10
@@ -55,3 +55,68 @@ def llm_prompt_jap(def_word, usr_word):
     print(test.response)
     print(test.answer_correct)
     return test
+
+# given a chapter number, choose any words from here and below and make a sentence in japanese, the user will have to translate into english
+def llm_prompt_sentence_eng(given_sentence, user_trans):
+    client = OpenAI()
+    completion = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+
+            {"role": "system", "content": f"The given sentence in japanese is {given_sentence}."},
+            {"role": "user", "content": f"Is '{user_trans}' an accurate translation of '{given_sentence}'?"}
+        ],
+        response_format=LLMResponseFormat,
+        timeout=10
+    )
+    test = completion.choices[0].message.parsed
+    print(test.response)
+    print(test.answer_correct)
+    return test
+    
+def generate_jp_sentence(given_word):
+    client = OpenAI()
+    completion = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": f"You will return just a japanese sentence, and after in brackets, the romaji"},
+            {"role": "user", "content": f"The given word is {given_word}. Generate a simple sentence using this word"}
+        ],
+        timeout=10
+    )
+    test = completion.choices[0].message.content
+    return test
+
+def llm_prompt_sentence_jp(given_sentence, user_trans):
+    client = OpenAI()
+    completion = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+
+            {"role": "system", "content": f"The given sentence in English is {given_sentence}."},
+            {"role": "system", "content": f"After each answer, provide your given correct translation, alongside romaji"},
+            {"role": "user", "content": f"Is '{user_trans}' an accurate translation of '{given_sentence}'?"}
+        ],
+        response_format=LLMResponseFormat,
+        timeout=10
+    )
+    test = completion.choices[0].message.parsed
+    print(test.response)
+    print(test.answer_correct)
+    return test
+            
+            
+def generate_en_sentence(given_word):
+    client = OpenAI()
+    completion = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": f"You will return just an english sentence"},
+            {"role": "user", "content": f"The given Japanese word is {given_word}. Generate a simple english sentence using this word"}
+        ]
+    )
+    test = completion.choices[0].message.content
+    return test
+
+def generate_convo_question(given_word):
+    pass
