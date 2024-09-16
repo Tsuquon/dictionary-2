@@ -12,6 +12,11 @@ func_dict = {
     "English to Japanese": prompts.llm_prompt_jap,
 }
 
+language_dict = {
+    "Japanese to English": "ja",
+    "English to Japanese": "en",
+}
+
 # @st.cache_resource
 
 def render_box_1():
@@ -19,11 +24,11 @@ def render_box_1():
     
     # Set up the first word if it's the first render
     # This needs to change sat that it can reset
-    if "first_render" not in st.session_state:
-        st.session_state.first_render = True
+    if st.session_state.first_render:
         st.session_state.current_word = st.session_state.word_bank[0]
         st.session_state.yield_call = iter(st.session_state.word_bank[1:])
-        prompts.convert_to_audio(st.session_state.current_word[0])
+        prompts.convert_to_audio(st.session_state.current_word[0], language=language_dict[st.session_state.translation_type])
+        st.session_state.first_render = False
 
     word = st.session_state.current_word
 
@@ -47,7 +52,7 @@ def render_box_1():
             st.session_state.current_word = None
         else:
             with message_container.container():
-                prompts.convert_to_audio(st.session_state.current_word[0])
+                prompts.convert_to_audio(st.session_state.current_word[0], language=language_dict[st.session_state.translation_type])
                 st.chat_message("ai").write(f"{st.session_state.current_word[0]}{', ' if st.session_state.current_word[1] else ''}{st.session_state.current_word[1] if st.session_state.current_word[1] else ''}")
 
 

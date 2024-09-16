@@ -57,7 +57,8 @@ def render_button():
         if st.session_state.translation_type == "" or st.session_state.selected_quantity == 0:
             st.write("Please select a translation type and quantity.")
         else:
-
+            st.session_state.first_render = True
+                
         # st.write("Button clicked!")
             st.switch_page("flash_card.py")
 
@@ -81,7 +82,6 @@ selected_quantity = quantity(get_quantity_from_db(selected_chapter))
 
 # sesstion state application
 st.session_state.translation_type = selected_translation
-print(st.session_state.translation_type)
 st.session_state.selected_chapter = selected_chapter
 st.session_state.selected_quantity = selected_quantity
 
