@@ -119,5 +119,17 @@ def generate_en_sentence(given_word):
     test = completion.choices[0].message.content
     return test
 
+def get_usage_example(given_word):
+    client = OpenAI()
+    completion = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "user", "content": f"Return a japanese sentence using the given word {given_word}, then in parenthesis, the romaji. Then the english translation"},
+        ],
+        timeout=10
+    )
+    test = completion.choices[0].message.content
+    return test
+
 def generate_convo_question(given_word):
     pass

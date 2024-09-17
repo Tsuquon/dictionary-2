@@ -2,7 +2,7 @@ import streamlit as st
 
 # Needs quantity, chapter, and type of translation mode
 
-st.title("Input Chooser")
+st.title("Customise Input")
 
 
 # eventually cache this data - also cache this connection
@@ -49,7 +49,7 @@ def quantity(word_value=0):
         step=1,
         
     )
-    
+    st.session_state.word_bank = st.session_state.word_bank[:quantity]
     return quantity
 
 def render_button():
