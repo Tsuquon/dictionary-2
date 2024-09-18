@@ -1,12 +1,14 @@
 import streamlit as st
 
-# Setup sql database
-# conn = st.connection("postgresql", type="sql")
-# df = conn.query("SELECT * FROM dictionary LIMIT 1000", ttl='10m')
 
-# for row in df.itertuples():
-#     st.write(row)
+def render_sidebar():
+    st.set_page_config(initial_sidebar_state="collapsed")
+    
+    with st.sidebar:
+        st.write("yoodayo")
 
-pg = st.navigation([st.Page("input_chooser.py"), st.Page("flash_card.py")])
+render_sidebar()
+pg = st.navigation([st.Page("input_chooser.py"), st.Page("flash_card.py"), st.Page("results.py")], position="hidden")
 pg.run()
 
+# sider bar
