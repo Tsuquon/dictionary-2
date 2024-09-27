@@ -13,8 +13,6 @@ def convert_to_audio(my_text, language='ja'):
     pygame.mixer.music.load(audio_file)
     pygame.mixer.music.play()
 
-
-
 def run_program(function_name, *args):
 
     return function_name(*args)
@@ -35,8 +33,8 @@ def llm_prompt_eng(def_word, usr_word):
         timeout=10
     )
     test = completion.choices[0].message.parsed
-    print(test.response)
-    print(test.answer_correct)
+    # print(test.response)
+    # print(test.answer_correct)
     return test
     
 def llm_prompt_jap(def_word, usr_word):
@@ -53,8 +51,8 @@ def llm_prompt_jap(def_word, usr_word):
         response_format=LLMResponseFormat
     )
     test = completion.choices[0].message.parsed
-    print(test.response)
-    print(test.answer_correct)
+    # print(test.response)
+    # print(test.answer_correct)
     return test
 
 # given a chapter number, choose any words from here and below and make a sentence in japanese, the user will have to translate into english
@@ -71,8 +69,8 @@ def llm_prompt_sentence_eng(given_sentence, user_trans):
         timeout=10
     )
     test = completion.choices[0].message.parsed
-    print(test.response)
-    print(test.answer_correct)
+    # print(test.response)
+    # print(test.answer_correct)
     return test
     
 def generate_jp_sentence(given_word):
@@ -102,10 +100,10 @@ def llm_prompt_sentence_jp(given_sentence, user_trans):
         timeout=10
     )
     test = completion.choices[0].message.parsed
-    print(test.response)
-    print(test.answer_correct)
-    return test
-            
+    # move this into terminal_interface.py
+    # print(test.response)
+    # print(test.answer_correct)
+    return test         
             
 def generate_en_sentence(given_word):
     client = OpenAI()
@@ -133,3 +131,14 @@ def get_usage_example(given_word):
 
 def generate_convo_question(given_word):
     pass
+
+# add in want etc
+def japanese_to_japanese_tense(given_word, user_word):
+    client = OpenAI()
+    completion = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "user", "content": f"The given word is {given_word}. "}
+        ],
+        timeout=10
+    )

@@ -6,8 +6,18 @@ import prompts
 if "audio_toggle" not in st.session_state:
     st.session_state.audio_toggle = True
 
-with st.popover(":material/settings:"):
-    st.session_state.audio_toggle = st.toggle("Audio", value = st.session_state.audio_toggle)
+# Move this into col 1
+with st.container():
+    upcol_1, upcol_2 = st.columns([0.2, 0.8])
+    with upcol_1:
+        upcol_1_1, upcol_1_2 = st.columns(2)
+        with upcol_1_1:
+            if st.button(":material/arrow_back:"):
+                st.switch_page("input_chooser.py")
+                
+        with upcol_1_2:
+            with st.popover(":material/settings:"):
+                st.session_state.audio_toggle = st.toggle("Audio", value = st.session_state.audio_toggle)
 
 if 'incorrect_words' not in st.session_state:
     st.session_state.incorrect_words = {}
@@ -33,6 +43,11 @@ word_num_dict = {
     "English to Japanese": 3,
 }
 
+word_num_dict_same = {
+    "Japanese to English": 3,
+    "English to Japanese": 0,
+}
+
 # @st.cache_resource
 def render_box_1():
     col1.header("現在質問")
@@ -43,7 +58,7 @@ def render_box_1():
         st.session_state.current_word = st.session_state.word_bank[0]
         st.session_state.yield_call = iter(st.session_state.word_bank[1:])
         if st.session_state.audio_toggle:
-            prompts.convert_to_audio(st.session_state.current_word[0], language=language_dict[st.session_state.translation_type])
+            prompts.convert_to_audio(st.session_state.current_word[word_num_dict[st.session_state.translation_type]], language=language_dict[st.session_state.translation_type])
         st.session_state.first_render = False
 
     word = st.session_state.current_word
@@ -52,14 +67,31 @@ def render_box_1():
 
     with message_container.container():
         st.chat_message("ai").write(f"{word[word_num_dict[st.session_state.translation_type]]}{', ' if word[1] and st.session_state.translation_type == 'Japanese to English' else ''}{word[1] if word[1] and st.session_state.translation_type == 'Japanese to English' else ''}")
+        
+        # Put this next to the input box
+        if st.button("Replay Audio"):
+            if st.session_state.audio_toggle:
+                prompts.convert_to_audio(st.session_state.current_word[word_num_dict[st.session_state.translation_type]], language=language_dict[st.session_state.translation_type])
 
     if prompt := col1.chat_input("答えて下さい。。。"):
         # response needs to change dynamically
-        response = prompts.run_program(func_dict[st.session_state.translation_type], word, prompt)
+        
+        if prompt == word[word_num_dict_same[st.session_state.translation_type]]:
+            class Response:
+                def __init__(self, answer_correct, response):
+                    self.answer_correct = answer_correct
+                    self.response = response
 
-        # with message_container.container():
-        #     st.chat_message("user").write(prompt)
-        render_box_2(response)
+            response = Response(
+                answer_correct=True,
+                response=f"'{prompt}' is correct for '{word}'"
+            )
+            render_box_2(response)
+        
+        else:  
+            response = prompts.run_program(func_dict[st.session_state.translation_type], word, prompt)
+            # print(word, prompt)
+            render_box_2(response)
 
         try:
             st.session_state.current_word = next(st.session_state.yield_call)
@@ -75,14 +107,9 @@ def render_box_1():
             with message_container.container():
                 if st.session_state.audio_toggle:
                     prompts.convert_to_audio(st.session_state.current_word[word_num_dict[st.session_state.translation_type]], language=language_dict[st.session_state.translation_type])
-                st.chat_message("ai").write(f"{st.session_state.current_word[word_num_dict[st.session_state.translation_type]]}{', ' if st.session_state.current_word[1] and st.session_state.translation_type == 'Japanese to English' else ''}{st.session_state.current_word[1] if st.session_state.current_word[1] and st.session_state.translation_type == 'Japanese to English' else ''}")
-
-
-
-        
+                st.chat_message("ai").write(f"{st.session_state.current_word[word_num_dict[st.session_state.translation_type]]}{', ' if st.session_state.current_word[1] and st.session_state.translation_type == 'Japanese to English' else ''}{st.session_state.current_word[1] if st.session_state.current_word[1] and st.session_state.translation_type == 'Japanese to English' else ''}")        
 
         # messages.chat_message("ai").write(word)
-
 
 def render_box_2(response):
     if response.answer_correct:
@@ -108,11 +135,5 @@ def progress_bar():
     
     st.progress(st.session_state.progress_value/len(st.session_state.word_bank), text=f"Progress: {st.session_state.progress_value}/{len(st.session_state.word_bank)}")
     
-
-render_box_1()
-# st.progress()
-    
+render_box_1()  
 progress_bar()
-    
-
-# render_boxes()

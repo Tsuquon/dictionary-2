@@ -59,7 +59,9 @@ def render_button():
             st.write("Please select a translation type and quantity.")
         else:
             st.session_state.first_render = True
-                
+            
+            if "progress_value" in st.session_state:
+                st.session_state.progress_value = 0
         # st.write("Button clicked!")
             st.switch_page("flash_card.py")
 

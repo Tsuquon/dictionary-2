@@ -15,5 +15,5 @@ with col1:
         st.switch_page("input_chooser.py")
         
 with col2:
-    if st.button("Practice wrong wrods", use_container_width=True):
+    if st.button("Practice wrong words", use_container_width=True):
         st.switch_page("flash_card.py")
