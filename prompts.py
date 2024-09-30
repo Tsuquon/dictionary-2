@@ -4,6 +4,12 @@ from gtts import gTTS
 import os
 import pygame
 
+def play_audio(audio_file):
+    pygame.mixer.init()
+    pygame.mixer.music.load(audio_file)
+    pygame.mixer.music.set_volume(0.2)
+    pygame.mixer.music.play()
+
 def convert_to_audio(my_text, language='ja'):
     conv_audio = gTTS(text=my_text, lang=language, slow=False)
     audio_file = "tmp_audio/temp.mp3"
@@ -11,6 +17,7 @@ def convert_to_audio(my_text, language='ja'):
     
     pygame.mixer.init()
     pygame.mixer.music.load(audio_file)
+    pygame.mixer.music.set_volume(1)
     pygame.mixer.music.play()
 
 def run_program(function_name, *args):
@@ -37,6 +44,7 @@ def llm_prompt_eng(def_word, usr_word):
     # print(test.answer_correct)
     return test
     
+# program gives the english translation, user gives japanese translation
 def llm_prompt_jap(def_word, usr_word):
     client = OpenAI()
     completion = client.beta.chat.completions.parse(
@@ -44,7 +52,7 @@ def llm_prompt_jap(def_word, usr_word):
         messages=[
             {"role": "system", "content": "You are going to read the english translation, and the user provides the japanese translation, and see if it matches the translation in the given tuple"},
             {"role": "system", "content": "The format of the tuple is structured as (kana, kanji (opt), pos, definition, chapter number)"},
-            {"role": "system", "content": "your response, followed by boolean if it was correct or not"},
+            {"role": "system", "content": "your response, followed by boolean if it was correct or not. If wrong, give the correct answer (with romaji)"},
             {"role": "system", "content": f"The given tuple is {def_word}."},
             {"role": "user", "content": f"Is the answer in japanese {usr_word}"}
         ],

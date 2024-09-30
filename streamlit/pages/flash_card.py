@@ -44,8 +44,8 @@ word_num_dict = {
 }
 
 word_num_dict_same = {
-    "Japanese to English": 3,
-    "English to Japanese": 0,
+    "Japanese to English": (3,),
+    "English to Japanese": (0,1)
 }
 
 # @st.cache_resource
@@ -76,7 +76,7 @@ def render_box_1():
     if prompt := col1.chat_input("答えて下さい。。。"):
         # response needs to change dynamically
         
-        if prompt == word[word_num_dict_same[st.session_state.translation_type]]:
+        if prompt in [word[x] for x in word_num_dict_same[st.session_state.translation_type]]:
             class Response:
                 def __init__(self, answer_correct, response):
                     self.answer_correct = answer_correct
@@ -113,6 +113,7 @@ def render_box_1():
 
 def render_box_2(response):
     if response.answer_correct:
+        prompts.play_audio("tmp_audio/correct-sound.mp3")
         feedback_container.chat_message("ai").write("Correct!")
         st.session_state.progress_value += 1
     else:
