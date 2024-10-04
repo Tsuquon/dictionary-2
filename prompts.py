@@ -25,15 +25,16 @@ def run_program(function_name, *args):
     return function_name(*args)
 
 # program gives japanese word, user gives english translation
-def llm_prompt_eng(def_word, usr_word):
+def llm_prompt_eng(def_word, usr_word, custom_arguments=""):
     # print(usr_word)
     client = OpenAI()
+    if custom_arguments is not "":
+        custom_arguments = "and is " + custom_arguments
     completion = client.beta.chat.completions.parse(
         model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "The format of the tuple is structured as (kana, kanji (opt), pos, definition, chapter number)"},
             {"role": "system", "content": "give your response, followed by boolean if the user provided answer is correct or not"},
-            # {"role": "system", "content": f"The given word is {def_word}."},
             {"role": "user", "content": f"My answer is '{usr_word}'. Does this closely match {def_word}?"}
         ],
         response_format=LLMResponseFormat,
@@ -45,16 +46,19 @@ def llm_prompt_eng(def_word, usr_word):
     return test
     
 # program gives the english translation, user gives japanese translation
-def llm_prompt_jap(def_word, usr_word):
+def llm_prompt_jap(def_word, usr_word, custom_arguments=""):
     client = OpenAI()
+    if custom_arguments is not "":
+        custom_arguments = "and is " + custom_arguments
+    
     completion = client.beta.chat.completions.parse(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "You are going to read the english translation, and the user provides the japanese translation, and see if it matches the translation in the given tuple"},
-            {"role": "system", "content": "The format of the tuple is structured as (kana, kanji (opt), pos, definition, chapter number)"},
-            {"role": "system", "content": "your response, followed by boolean if it was correct or not. If wrong, give the correct answer (with romaji)"},
+            {"role": "system", "content": f"You are going to read the english translation, and the user provides the japanese translation that is {custom_arguments}"},
+            # {"role": "system", "content": "The format of the tuple is structured as (kana, kanji (opt), pos, definition, chapter number)"},
+            # {"role": "system", "content": "your response, followed by boolean if it was correct or not. If wrong, give the correct answer (with romaji)"},
             {"role": "system", "content": f"The given tuple is {def_word}."},
-            {"role": "user", "content": f"Is the answer in japanese {usr_word}"}
+            {"role": "user", "content": f"Is the answer in japanese {usr_word}? Respond in English"}
         ],
         response_format=LLMResponseFormat
     )
@@ -63,6 +67,7 @@ def llm_prompt_jap(def_word, usr_word):
     # print(test.answer_correct)
     return test
 
+# not used
 # given a chapter number, choose any words from here and below and make a sentence in japanese, the user will have to translate into english
 def llm_prompt_sentence_eng(given_sentence, user_trans):
     client = OpenAI()
@@ -81,6 +86,7 @@ def llm_prompt_sentence_eng(given_sentence, user_trans):
     # print(test.answer_correct)
     return test
     
+# not used
 def generate_jp_sentence(given_word):
     client = OpenAI()
     completion = client.beta.chat.completions.parse(
@@ -94,6 +100,7 @@ def generate_jp_sentence(given_word):
     test = completion.choices[0].message.content
     return test
 
+# not used
 def llm_prompt_sentence_jp(given_sentence, user_trans):
     client = OpenAI()
     completion = client.beta.chat.completions.parse(
@@ -112,7 +119,8 @@ def llm_prompt_sentence_jp(given_sentence, user_trans):
     # print(test.response)
     # print(test.answer_correct)
     return test         
-            
+
+#not used
 def generate_en_sentence(given_word):
     client = OpenAI()
     completion = client.beta.chat.completions.parse(
@@ -137,16 +145,6 @@ def get_usage_example(given_word):
     test = completion.choices[0].message.content
     return test
 
+# not used
 def generate_convo_question(given_word):
     pass
-
-# add in want etc
-def japanese_to_japanese_tense(given_word, user_word):
-    client = OpenAI()
-    completion = client.beta.chat.completions.parse(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "user", "content": f"The given word is {given_word}. "}
-        ],
-        timeout=10
-    )
