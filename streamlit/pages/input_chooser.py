@@ -4,18 +4,15 @@ import streamlit as st
 
 st.title("Customise Input")
 
-
-
-# eventually cache this data - also cache this connection
-# @st.cache_data
-# @st.cache_resource
-def get_quantity_from_db(chapter_number):
+def get_quantity_from_db(chapter_number, selected_pos):
     import random
 
     conn = st.connection("postgresql", type="sql")
     
+    pos_condition = " OR ".join([f"pos = '{pos}'" for pos in selected_pos])
+    query = f"SELECT * FROM dictionary WHERE chapter = {chapter_number} AND ({pos_condition})"
     
-    st.session_state.word_bank = conn.query(f"SELECT * FROM dictionary WHERE chapter = {chapter_number}", ttl='10m').values.tolist()
+    st.session_state.word_bank = conn.query(query, ttl='10m').values.tolist()
     random.shuffle(st.session_state.word_bank)
     return len(st.session_state.word_bank)
 
@@ -31,6 +28,40 @@ def translation_mode():
     
     return translation_type
 
+def word_types():
+    all_options = []
+    
+
+
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        quick_select_verb = st.checkbox("Quick select verb", value=True)
+    with col2:
+        quick_select_adjectives = st.checkbox("Quick select adjectives", value=True)
+    with col3:
+        quick_select_other = st.checkbox("Quick select other", value=True)
+    
+    if quick_select_verb:
+        all_options.extend(["u-v.", "ru-v.", "irr-v."])
+    
+    if quick_select_adjectives:
+        all_options.extend(["い-adj.", "な-adj."])
+    
+    if quick_select_other:
+        all_options.extend(["pre.", "n.", "exp.", "part.", "suf.", "adv."])
+
+    word_options = st.multiselect(
+        "Select word options",
+        ("pre.", "n.", "い-adj.", "u-v.", "exp.", "part.", "suf.", "adv.", "な-adj.", "irr-v.", "ru-v."),
+        default=all_options,
+        placeholder="defaults to all"
+    )    
+    if not word_options:
+        word_options = ["pre.", "n.", "い-adj.", "u-v.", "exp.", "part.", "suf.", "adv.", "な-adj.", "irr-v.", "ru-v."]
+
+
+    return word_options
 def testing_options(translation_type):
     if translation_type == "Japanese to English":
         verb_options = st.multiselect(
@@ -102,14 +133,18 @@ def chapter():
     return chapter
 
 def quantity(word_value=0):
-    quantity = st.slider(
-        "Select quantity",
-        min_value=0,
-        max_value=word_value,
-        value=0,
-        step=1,
-        
-    )
+    try:
+        quantity = st.slider(
+            "Select quantity",
+            min_value=0,
+            max_value=word_value,
+            value=0,
+            step=1,
+            
+        )
+    except(st.errors.StreamlitAPIException):
+        st.error("Chosen requisites have 0 words available")
+        quantity = 0
     st.session_state.word_bank = st.session_state.word_bank[:quantity]
     return quantity
 
@@ -142,13 +177,12 @@ if "selected_quantity" not in st.session_state:
 if "testing_options" not in st.session_state:
     st.session_state.testing_options = None
 
-
-
 # main runnings
 selected_translation = translation_mode()
+selected_pos = word_types()
 selected_options = testing_options(selected_translation)
 selected_chapter = chapter()
-selected_quantity = quantity(get_quantity_from_db(selected_chapter))
+selected_quantity = quantity(get_quantity_from_db(selected_chapter, selected_pos))
 
 # sesstion state application
 st.session_state.translation_type = selected_translation
@@ -157,4 +191,3 @@ st.session_state.selected_chapter = selected_chapter
 st.session_state.selected_quantity = selected_quantity
 
 render_button()
-

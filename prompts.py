@@ -51,6 +51,7 @@ def llm_prompt_jap(def_word, usr_word, custom_arguments=""):
     if custom_arguments is not "":
         custom_arguments = "and is " + custom_arguments
     
+    print(custom_arguments)
     completion = client.beta.chat.completions.parse(
         model="gpt-4o-mini",
         messages=[
@@ -58,7 +59,7 @@ def llm_prompt_jap(def_word, usr_word, custom_arguments=""):
             # {"role": "system", "content": "The format of the tuple is structured as (kana, kanji (opt), pos, definition, chapter number)"},
             # {"role": "system", "content": "your response, followed by boolean if it was correct or not. If wrong, give the correct answer (with romaji)"},
             {"role": "system", "content": f"The given tuple is {def_word}."},
-            {"role": "user", "content": f"Is the answer in japanese {usr_word}? Respond in English"}
+            {"role": "user", "content": f"Is the answer in japanese {usr_word} {custom_arguments}? Respond in English"}
         ],
         response_format=LLMResponseFormat
     )

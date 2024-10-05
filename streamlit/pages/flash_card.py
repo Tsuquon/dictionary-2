@@ -57,16 +57,22 @@ adjective__classification = ('い-adj.','な-adj.')
 def option_selection(word):
     options = st.session_state.testing_options
     option_selection = ""
-    
-    if word[2] in verb_classification:
-        # print("runs", word[0])
-        option_selection = f"{random.choice(options[0])}, {random.choice(options[1])}, {random.choice(options[2])}"
-
+    print(options[0])
+    print(word[2])
+    print(verb_classification)
+    option0 = random.choice(options[0])
+    option1 = random.choice(options[1])
+    option2 = random.choice(options[2])
     
     if word[2] in adjective__classification:
-        # print("runs", word[0])
-        option_selection = f"{random.choice(options[1])}, {random.choice(options[2])}"
-        
+        option_selection = f"{option1}, {option2}"
+    
+    elif word[2] in verb_classification and option0 == 'te':    
+        option_selection = f"{option0}, {option2}"
+    
+    elif word[2] in verb_classification:
+        option_selection = f"{option0}, {option1}, {option2}"
+    
     return option_selection
 
 # @st.cache_resource
@@ -103,7 +109,9 @@ def render_box_1():
     if prompt := col1.chat_input("答えて下さい。。。"):
         # response needs to change dynamically
         
-        if prompt in [word[x] for x in word_num_dict_same[st.session_state.translation_type]] and ((word[2] not in verb_classification and word[2] not in adjective__classification) or st.session_state.my_option[0][0] == "casual" and st.session_state.my_option[1][0] == "present" and st.session_state.my_option[2][0] == "affirmative"):
+        if (prompt in [word[x] for x in word_num_dict_same[st.session_state.translation_type]] 
+            and ((word[2] not in verb_classification and word[2] not in adjective__classification) 
+                 or st.session_state.my_option[0][0] == "casual" and st.session_state.my_option[1][0] == "present" and st.session_state.my_option[2][0] == "affirmative")):
             class Response:
                 def __init__(self, answer_correct, response):
                     self.answer_correct = answer_correct
@@ -116,6 +124,7 @@ def render_box_1():
             render_box_2(response)
         
         else:    
+            # te verb exception, since it can't have a tense
             response = prompts.run_program(func_dict[st.session_state.translation_type], word, prompt, st.session_state.my_option)
             # print(word, prompt)
             render_box_2(response)        
@@ -138,6 +147,7 @@ def render_box_1():
                 print("current word is", st.session_state.current_word)
                 st.session_state.my_option = option_selection(st.session_state.current_word)        
                 # if st.session_state.my_option != "":
+                # Maybe move this upwards, because first word doesnt render the types
                 st.chat_message("ai").write(f"{st.session_state.my_option}")
         
 
