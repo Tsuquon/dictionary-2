@@ -31,9 +31,6 @@ def translation_mode():
 def word_types():
     all_options = []
     
-
-
-
     col1, col2, col3 = st.columns(3)
     with col1:
         quick_select_verb = st.checkbox("Quick select verb", value=True)
@@ -59,7 +56,6 @@ def word_types():
     )    
     if not word_options:
         word_options = ["pre.", "n.", "い-adj.", "u-v.", "exp.", "part.", "suf.", "adv.", "な-adj.", "irr-v.", "ru-v."]
-
 
     return word_options
 def testing_options(translation_type):
