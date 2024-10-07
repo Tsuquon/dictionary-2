@@ -4,13 +4,14 @@ import streamlit as st
 
 st.title("Customise Input")
 
-def get_quantity_from_db(chapter_number, selected_pos):
+def get_quantity_from_db(chapter_numbers, selected_pos):
     import random
 
     conn = st.connection("postgresql", type="sql")
     
     pos_condition = " OR ".join([f"pos = '{pos}'" for pos in selected_pos])
-    query = f"SELECT * FROM dictionary WHERE chapter = {chapter_number} AND ({pos_condition})"
+    chapter_condition = " OR ".join([f"chapter = {chapter}" for chapter in chapter_numbers])
+    query = f"SELECT * FROM dictionary WHERE ({chapter_condition}) AND ({pos_condition})"
     
     st.session_state.word_bank = conn.query(query, ttl='10m').values.tolist()
     random.shuffle(st.session_state.word_bank)
@@ -58,6 +59,7 @@ def word_types():
         word_options = ["pre.", "n.", "い-adj.", "u-v.", "exp.", "part.", "suf.", "adv.", "な-adj.", "irr-v.", "ru-v."]
 
     return word_options
+
 def testing_options(translation_type):
     if translation_type == "Japanese to English":
         verb_options = st.multiselect(
@@ -119,14 +121,20 @@ def testing_options(translation_type):
 
 # This updates whenever chapter updates - should return the number of words from a chapter
 def chapter():
-    chapter = st.slider(
-        "Select chapter",
-        min_value=0,
-        max_value=12,
-        value=0,
-        step=1,
+    chapter_quick_select = st.checkbox("Quick select all chapters")
+    
+    my_default = list(range(13))
+    
+    chapters = st.multiselect(
+        "Select chapters",
+        options=list(range(13)),
+        default=my_default if chapter_quick_select else None,
+        placeholder="Defaults to all chapters"
     )
-    return chapter
+    if chapters == []:
+        chapters = list(range(13))
+    
+    return chapters
 
 def quantity(word_value=0):
     try:
@@ -164,8 +172,8 @@ if "translation_type" not in st.session_state:
 if "word_bank" not in st.session_state:
     st.session_state.word_bank = []
     
-if "selected_chapter" not in st.session_state:
-    st.session_state.selected_chapter = 0
+if "selected_chapters" not in st.session_state:
+    st.session_state.selected_chapters = [0]
     
 if "selected_quantity" not in st.session_state:
     st.session_state.selected_quantity = 0
@@ -177,13 +185,13 @@ if "testing_options" not in st.session_state:
 selected_translation = translation_mode()
 selected_pos = word_types()
 selected_options = testing_options(selected_translation)
-selected_chapter = chapter()
-selected_quantity = quantity(get_quantity_from_db(selected_chapter, selected_pos))
+selected_chapters = chapter()
+selected_quantity = quantity(get_quantity_from_db(selected_chapters, selected_pos))
 
 # sesstion state application
 st.session_state.translation_type = selected_translation
 st.session_state.testing_options = selected_options
-st.session_state.selected_chapter = selected_chapter
+st.session_state.selected_chapters = selected_chapters
 st.session_state.selected_quantity = selected_quantity
 
 render_button()

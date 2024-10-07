@@ -57,9 +57,6 @@ adjective__classification = ('い-adj.','な-adj.')
 def option_selection(word):
     options = st.session_state.testing_options
     option_selection = ""
-    print(options[0])
-    print(word[2])
-    print(verb_classification)
     option0 = random.choice(options[0])
     option1 = random.choice(options[1])
     option2 = random.choice(options[2])
@@ -108,10 +105,12 @@ def render_box_1():
 
     if prompt := col1.chat_input("答えて下さい。。。"):
         # response needs to change dynamically
+
+        my_options = st.session_state.my_option.split(", ")
         
         if (prompt in [word[x] for x in word_num_dict_same[st.session_state.translation_type]] 
             and ((word[2] not in verb_classification and word[2] not in adjective__classification) 
-                 or st.session_state.my_option[0][0] == "casual" and st.session_state.my_option[1][0] == "present" and st.session_state.my_option[2][0] == "affirmative")):
+                 or (my_options[0] == "casual" and my_options[1] == "present" and my_options[2] == "affirmative"))):
             class Response:
                 def __init__(self, answer_correct, response):
                     self.answer_correct = answer_correct
@@ -144,7 +143,6 @@ def render_box_1():
                 if st.session_state.audio_toggle:
                     prompts.convert_to_audio(st.session_state.current_word[word_num_dict[st.session_state.translation_type]], language=language_dict[st.session_state.translation_type])
                 st.chat_message("ai").write(f"{st.session_state.current_word[word_num_dict[st.session_state.translation_type]]}{', ' if st.session_state.current_word[1] and st.session_state.translation_type == 'Japanese to English' else ''}{st.session_state.current_word[1] if st.session_state.current_word[1] and st.session_state.translation_type == 'Japanese to English' else ''}")
-                print("current word is", st.session_state.current_word)
                 st.session_state.my_option = option_selection(st.session_state.current_word)        
                 # if st.session_state.my_option != "":
                 # Maybe move this upwards, because first word doesnt render the types

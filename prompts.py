@@ -48,26 +48,16 @@ def llm_prompt_eng(def_word, usr_word, custom_arguments=""):
 # program gives the english translation, user gives japanese translation
 def llm_prompt_jap(def_word, usr_word, custom_arguments=""):
     client = OpenAI()
-    if custom_arguments is not "":
-        custom_arguments = "and is " + custom_arguments
-    
-    print(custom_arguments)
+    custom_arguments_str = f" and is in the form {custom_arguments}" if custom_arguments else ""
     completion = client.beta.chat.completions.parse(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": f"You are going to read the english translation, and the user provides the japanese translation that is {custom_arguments}"},
-            # {"role": "system", "content": "The format of the tuple is structured as (kana, kanji (opt), pos, definition, chapter number)"},
-            # {"role": "system", "content": "your response, followed by boolean if it was correct or not. If wrong, give the correct answer (with romaji)"},
-            {"role": "system", "content": f"The given tuple is {def_word}."},
-            {"role": "user", "content": f"Is the answer in japanese {usr_word} {custom_arguments}? Respond in English"}
+            {"role": "system", "content": f"You are evaluating a Japanese translation. The English word or phrase is from the following tuple: {def_word}. The user's Japanese translation should be correct{custom_arguments_str}."},
+            {"role": "user", "content": f"Is '{usr_word}' the correct Japanese translation{custom_arguments_str}? Respond in English with your evaluation and explanation."}
         ],
         response_format=LLMResponseFormat
     )
-    test = completion.choices[0].message.parsed
-    # print(test.response)
-    # print(test.answer_correct)
-    return test
-
+    return completion.choices[0].message.parsed
 # not used
 # given a chapter number, choose any words from here and below and make a sentence in japanese, the user will have to translate into english
 def llm_prompt_sentence_eng(given_sentence, user_trans):
