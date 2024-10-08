@@ -1,9 +1,8 @@
 import streamlit as st
 
-# Needs quantity, chapter, and type of translation mode
-
 st.title("Customise Input")
 
+# In the future, extract out the assignment word bank from here
 def get_quantity_from_db(chapter_numbers, selected_pos):
     import random
 

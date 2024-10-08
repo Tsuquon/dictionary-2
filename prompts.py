@@ -1,5 +1,5 @@
 from openai import OpenAI
-from llm_response_format import LLMResponseFormat
+from llm_response_format import LLMResponseFormat, ConversationResponse
 from gtts import gTTS
 import os
 import pygame
@@ -28,7 +28,7 @@ def run_program(function_name, *args):
 def llm_prompt_eng(def_word, usr_word, custom_arguments=""):
     # print(usr_word)
     client = OpenAI()
-    if custom_arguments is not "":
+    if custom_arguments != "":
         custom_arguments = "and is " + custom_arguments
     completion = client.beta.chat.completions.parse(
         model="gpt-4o-mini",
@@ -136,6 +136,24 @@ def get_usage_example(given_word):
     test = completion.choices[0].message.content
     return test
 
-# not used
-def generate_convo_question(given_word):
-    pass
+
+# in beta
+def generate_conversation(vocab_list, total_response=None):
+    client = OpenAI()
+    messages = [
+        {"role": "system", "content": f"Ask a conversational starter question in Japanese using this vocabulary list: {vocab_list}"}
+    ]
+
+    if total_response is None:
+        print("happens")
+        messages.append({"role": "user", "content": "Start the conversation"})
+    else:
+        messages.extend(total_response)
+
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+        timeout=10
+    )
+    return completion.choices[0].message.content
+
