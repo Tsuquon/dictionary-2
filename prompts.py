@@ -4,10 +4,10 @@ from gtts import gTTS
 import os
 import pygame
 
-def play_audio(audio_file):
+def play_audio(audio_file, volume=0.2):
     pygame.mixer.init()
     pygame.mixer.music.load(audio_file)
-    pygame.mixer.music.set_volume(0.2)
+    pygame.mixer.music.set_volume(volume)
     pygame.mixer.music.play()
 
 # this is google's api for simple text to speech
@@ -32,6 +32,14 @@ def text_to_speech(text):
     )
     
     completion.stream_to_file(audio_file)
+
+def speech_to_text(audio_file):
+    client = OpenAI()
+    completion = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=audio_file
+    )
+    return completion.text
 
 def run_program(function_name, *args):
 
@@ -158,7 +166,6 @@ def generate_conversation(vocab_list, total_response=None):
     ]
 
     if total_response is None:
-        print("happens")
         messages.append({"role": "user", "content": "Start the conversation"})
     else:
         messages.extend(total_response)

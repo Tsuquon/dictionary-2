@@ -175,6 +175,8 @@ def progress_bar():
         st.session_state.progress_value = 0
     
     st.progress(st.session_state.progress_value/len(st.session_state.word_bank), text=f"Progress: {st.session_state.progress_value}/{len(st.session_state.word_bank)}")
-    
+
+
+
 render_box_1()  
 progress_bar()

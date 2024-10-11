@@ -169,6 +169,7 @@ def alternate_render_button():
         if st.session_state.selected_chapters[0] > st.session_state.selected_chapters[1]:
             st.error("Lower chapter number must be lower than higher chapter number")
         else:
+            st.session_state.dialogue = []
             st.switch_page("transcription.py")
 
 # session state definitions
