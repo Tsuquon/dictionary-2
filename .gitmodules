@@ -1,0 +1,3 @@
+[submodule "jconj"]
+	path = jconj
+	url = https://github.com/yamagoya/jconj.git

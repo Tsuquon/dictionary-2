@@ -6,8 +6,11 @@ import streamlit as st
 # st.write(st.session_state.incorrect_words)
 
 st.title("Results")
-st.bar_chart(st.session_state.incorrect_words, horizontal=True)
-
+st.bar_chart(
+    st.session_state.incorrect_words,
+    use_container_width=True
+)
+print(st.session_state.incorrect_words)
 col1, col2 = st.columns(2)
 
 with col1:

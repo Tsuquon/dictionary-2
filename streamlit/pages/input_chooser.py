@@ -1,9 +1,8 @@
 import streamlit as st
 
-# Needs quantity, chapter, and type of translation mode
-
 st.title("Customise Input")
 
+# In the future, extract out the assignment word bank from here
 def get_quantity_from_db(chapter_numbers, selected_pos):
     import random
 
@@ -21,7 +20,7 @@ def translation_mode():
     
     translation_type = st.selectbox(
         "Select translation type",
-        ("Japanese to English", "English to Japanese"),
+        ("Japanese to English", "English to Japanese", "Conversation Mode"),
         index=0,
         placeholder="Select translation type",
         
@@ -82,7 +81,7 @@ def testing_options(translation_type):
             ["affirmative"],
             placeholder="defaults to affirmative"
         )
-    else:
+    elif translation_type == "English to Japanese":
         # should only apply for verbs and adjectives 
         verb_options = st.multiselect(
             "Select verb options",
@@ -104,7 +103,7 @@ def testing_options(translation_type):
             ["affirmative"],
             placeholder="defaults to affirmative"
         )
-    
+            
     # applies to only verbs
     if verb_options is None:
         verb_options = ["casual"]
@@ -164,6 +163,14 @@ def render_button():
         # st.write("Button clicked!")
             print(st.session_state.testing_options)
             st.switch_page("flash_card.py")
+            
+def alternate_render_button():
+    if st.button("Submit"):
+        if st.session_state.selected_chapters[0] > st.session_state.selected_chapters[1]:
+            st.error("Lower chapter number must be lower than higher chapter number")
+        else:
+            st.session_state.dialogue = []
+            st.switch_page("transcription.py")
 
 # session state definitions
 if "translation_type" not in st.session_state:
@@ -181,17 +188,31 @@ if "selected_quantity" not in st.session_state:
 if "testing_options" not in st.session_state:
     st.session_state.testing_options = None
 
+def alternate_chapter():
+    low = st.number_input("Select the lower chapter number", min_value=0, max_value=12, value=0, step=1)
+    high = st.number_input("Select the higher chapter number", min_value=0, max_value=12, value=0, step=1)
+    return (low, high)
+    
 # main runnings
 selected_translation = translation_mode()
-selected_pos = word_types()
-selected_options = testing_options(selected_translation)
-selected_chapters = chapter()
-selected_quantity = quantity(get_quantity_from_db(selected_chapters, selected_pos))
 
-# sesstion state application
-st.session_state.translation_type = selected_translation
-st.session_state.testing_options = selected_options
-st.session_state.selected_chapters = selected_chapters
-st.session_state.selected_quantity = selected_quantity
+if selected_translation == "Conversation Mode":
+    selected_chapters = alternate_chapter()
+    st.session_state.selected_chapters = selected_chapters
+    alternate_render_button()
+    
+else:
+    
+    
+    selected_pos = word_types()
+    selected_options = testing_options(selected_translation)
+    selected_chapters = chapter()
+    selected_quantity = quantity(get_quantity_from_db(selected_chapters, selected_pos))
 
-render_button()
+    # sesstion state application
+    st.session_state.translation_type = selected_translation
+    st.session_state.testing_options = selected_options
+    st.session_state.selected_chapters = selected_chapters
+    st.session_state.selected_quantity = selected_quantity
+
+    render_button()
