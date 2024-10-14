@@ -18,7 +18,7 @@ for word in data:
 
 st.bar_chart(
     chart_data,
-    use_container_width=True
+    use_container_width=True,
     horizontal=True
 )
 col1, col2 = st.columns(2)
