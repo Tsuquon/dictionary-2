@@ -79,7 +79,7 @@ if "dialogue" not in st.session_state or st.session_state.dialogue == []:
         
         st.chat_message("ai").write_stream(stream_words(response))
         text_to_speech(response)
-        play_audio("tmp_audio/tts_speech.mp3")
+        play_audio("tmp_audio/tts_speech.mp3", 1)
         
 
 def write_message():

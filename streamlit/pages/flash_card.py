@@ -72,6 +72,12 @@ def option_selection(word):
     
     return option_selection
 
+@st.fragment
+def replay_audio():
+    if st.button("Replay Audio"):
+        if st.session_state.audio_toggle:
+            prompts.convert_to_audio(st.session_state.current_word[word_num_dict[st.session_state.translation_type]], language=language_dict[st.session_state.translation_type])   
+
 # @st.cache_resource
 def render_box_1():
     col1.header("現在質問")
@@ -95,12 +101,7 @@ def render_box_1():
         st.chat_message("ai").write(f"{word[word_num_dict[st.session_state.translation_type]]}{', ' if word[1] and st.session_state.translation_type == 'Japanese to English' else ''}{word[1] if word[1] and st.session_state.translation_type == 'Japanese to English' else ''}")
         # check if verb first
 
-        
-
         # Put this next to the input box
-        if st.button("Replay Audio"):
-            if st.session_state.audio_toggle:
-                prompts.convert_to_audio(st.session_state.current_word[word_num_dict[st.session_state.translation_type]], language=language_dict[st.session_state.translation_type])
                 
 
     if prompt := col1.chat_input("答えて下さい。。。"):
@@ -146,10 +147,9 @@ def render_box_1():
                 st.session_state.my_option = option_selection(st.session_state.current_word)        
                 # if st.session_state.my_option != "":
                 # Maybe move this upwards, because first word doesnt render the types
-                st.chat_message("ai").write(f"{st.session_state.my_option}")
-        
-
-        # messages.chat_message("ai").write(word)
+                if st.session_state.my_option:
+                    st.chat_message("ai").write(f"{st.session_state.my_option}")
+    replay_audio()
 
 def render_box_2(response):
     if response.answer_correct:
@@ -160,7 +160,7 @@ def render_box_2(response):
         feedback_container.chat_message("ai").write("Incorrect!")
         st.session_state.yield_call = itertools.chain(st.session_state.yield_call, iter([st.session_state.current_word]))
         
-        word = st.session_state.current_word[0]
+        word = tuple(st.session_state.current_word)
         if word in st.session_state.incorrect_words:
             st.session_state.incorrect_words[word] += 1
         else:
