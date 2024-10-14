@@ -1,7 +1,7 @@
 from openai import OpenAI
 from llm_response_format import LLMResponseFormat, ConversationResponse
 from gtts import gTTS
-import st
+import streamlit as st
 import pygame
 
 def play_audio(audio_file, volume=0.2):
