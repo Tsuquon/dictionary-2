@@ -10,10 +10,13 @@ def play_audio(audio_file, volume=0.2):
         pygame.mixer.music.load(audio_file)
         pygame.mixer.music.set_volume(volume)
         pygame.mixer.music.play()
-    except Exception as e:
-        print(e)
-        st.warning("Error playing audio - streamlit doesn't natively support audio playback without the player. Will find a workaround soon :)") 
-        
+    except pygame.error as e:
+        if "DSP" in str(e):
+            print("DSP (Digital Signal Processing) is not available.")
+            st.warning("Audio playback is not supported on this system due to missing DSP.")
+        else:
+            print(e)
+            st.warning("Error playing audio - streamlit doesn't natively support audio playback without the player. Will find a workaround soon :)")
 
 # this is google's api for simple text to speech
 def convert_to_audio(my_text, language='ja'):
