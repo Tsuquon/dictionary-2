@@ -70,14 +70,34 @@ def clean_df() -> pd.DataFrame:
         return chapter
 
     formatted_df['chapter'] = formatted_df['chapter'].apply(extract_chapter)
-    
-    # # Replace empty values with null
-    # formatted_df = formatted_df.replace('NaN', None)
-    
-    # print(formatted_df.loc[70])
+
     return formatted_df
+
+def extract_data_from_other_db() -> pd.DataFrame:
+    try:
+        conn = psycopg2.connect(
+            host='localhost',
+            database='dictionary',
+            user='postgres',
+            password='microsoft11',
+        )
+    except:
+        print("Unable to connect to the other database")
+        raise ConnectionError
+    
+    query = """
+    SELECT * FROM dictionary;
+    """
+    
+    df = pd.read_sql_query(query, conn)
+    conn.close()
+    
+    return df
 
 if __name__ == "__main__":
     create_table()
-    dfs = clean_df()
+    # dfs = clean_df()
+    dfs = extract_data_from_other_db()
     insert_into_database(dfs)
+    # other_df = extract_data_from_other_db()
+    # print(other_df))
