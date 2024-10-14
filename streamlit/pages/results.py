@@ -3,14 +3,23 @@
 
 import streamlit as st
 
+# print(st.session_state.incorrect_words)
 # st.write(st.session_state.incorrect_words)
 
 st.title("Results")
+data = st.session_state.incorrect_words
+chart_data = {}
+
+for word in data:
+    if word[0] in chart_data:
+        chart_data[word[0]] += 1
+    else:
+        chart_data[word[0]] = 1
+
 st.bar_chart(
-    st.session_state.incorrect_words,
+    chart_data,
     use_container_width=True
 )
-print(st.session_state.incorrect_words)
 col1, col2 = st.columns(2)
 
 with col1:

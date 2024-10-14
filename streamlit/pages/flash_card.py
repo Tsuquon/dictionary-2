@@ -21,7 +21,7 @@ with st.container():
                 st.session_state.audio_toggle = st.toggle("Audio", value = st.session_state.audio_toggle)
 
 if 'incorrect_words' not in st.session_state:
-    st.session_state.incorrect_words = {}
+    st.session_state.incorrect_words = []
 
 if 'my_option' not in st.session_state:
     st.session_state.my_option = ""
@@ -164,10 +164,7 @@ def render_box_2(response):
         st.session_state.yield_call = itertools.chain(st.session_state.yield_call, iter([st.session_state.current_word]))
         
         word = tuple(st.session_state.current_word)
-        if word in st.session_state.incorrect_words:
-            st.session_state.incorrect_words[word] += 1
-        else:
-            st.session_state.incorrect_words[word] = 1
+        st.session_state.incorrect_words.append(word)
 
     feedback_container.chat_message("ai").write(response.response)
     popover = col2.popover("See usage example")
