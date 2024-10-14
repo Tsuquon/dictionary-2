@@ -14,7 +14,7 @@ with st.container():
         upcol_1_1, upcol_1_2 = st.columns(2)
         with upcol_1_1:
             if st.button(":material/arrow_back:"):
-                st.switch_page("input_chooser.py")
+                st.switch_page("streamlit/pages/input_chooser.py")
                 
         with upcol_1_2:
             with st.popover(":material/settings:"):
