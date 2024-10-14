@@ -76,6 +76,7 @@ def option_selection(word):
 def replay_audio():
     if st.button("Replay Audio"):
         if st.session_state.audio_toggle:
+            pass
             # prompts.convert_to_audio(st.session_state.current_word[word_num_dict[st.session_state.translation_type]], language=language_dict[st.session_state.translation_type])   
 
 # @st.cache_resource
@@ -90,6 +91,7 @@ def render_box_1():
         st.session_state.my_option = option_selection(st.session_state.current_word)
 
         if st.session_state.audio_toggle:
+            pass
             # prompts.convert_to_audio(st.session_state.current_word[word_num_dict[st.session_state.translation_type]], language=language_dict[st.session_state.translation_type])
         st.session_state.first_render = False
 
@@ -142,6 +144,7 @@ def render_box_1():
         else:
             with message_container.container():
                 if st.session_state.audio_toggle:
+                    pass
                     # prompts.convert_to_audio(st.session_state.current_word[word_num_dict[st.session_state.translation_type]], language=language_dict[st.session_state.translation_type])
                 st.chat_message("ai").write(f"{st.session_state.current_word[word_num_dict[st.session_state.translation_type]]}{', ' if st.session_state.current_word[1] and st.session_state.translation_type == 'Japanese to English' else ''}{st.session_state.current_word[1] if st.session_state.current_word[1] and st.session_state.translation_type == 'Japanese to English' else ''}")
                 st.session_state.my_option = option_selection(st.session_state.current_word)        
