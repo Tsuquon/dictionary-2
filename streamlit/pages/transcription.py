@@ -8,12 +8,8 @@ import dango
 
 def extract_words(chapter_number):
     try:
-        conn = psycopg2.connect(
-            host=db_host,
-            database=db_name,
-            user=db_user,
-            password=db_pass,
-        )
+        conn = st.connection("postgresql", type="sql")
+
     except ConnectionError:
         print("Error: Unable to connect to the database.")
         raise ConnectionError
@@ -21,15 +17,11 @@ def extract_words(chapter_number):
     sql = """
         SELECT kana, kanji, translation
         FROM dictionary
-        WHERE chapter BETWEEN %s AND %s
+        WHERE chapter BETWEEN :a AND :b
         ORDER BY RANDOM();
     """
     
-    with conn.cursor() as curs:
-        curs.execute(sql, chapter_number)
-        results = curs.fetchall()
-        
-    conn.close()
+    results = conn.query(sql, ttl='10m', params={"a": chapter_number[0], "b": chapter_number[1]}).values.tolist()
     
     return results
 
