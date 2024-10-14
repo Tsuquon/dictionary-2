@@ -140,7 +140,7 @@ def render_box_1():
             st.session_state.selected_quantity = None
             st.session_state.progress_value = 0
             # Change page to results page instead - or load a button first that when the user is ready goes to results page, or redo, or back to input_chooser.py
-            st.switch_page("results.py")
+            st.switch_page("streamlit/pages/results.py")
         else:
             with message_container.container():
                 if st.session_state.audio_toggle:
