@@ -50,7 +50,7 @@ def run_test(chapter_number, user_response=None, initial=False):
 # -----------------------------------------------------------------------------
 
 if st.button(":material/arrow_back:"):
-    st.switch_page("input_chooser.py")
+    st.switch_page("streamlit/pages/input_chooser.py")
 
 col1, col2 = st.columns(2)
 

@@ -15,8 +15,8 @@ col1, col2 = st.columns(2)
 
 with col1:
     if st.button("Return to choosing inputs", use_container_width=True):
-        st.switch_page("input_chooser.py")
+        st.switch_page("streamlit/pages/input_chooser.py")
         
 with col2:
     if st.button("Practice wrong words", use_container_width=True):
-        st.switch_page("flash_card.py")
+        st.switch_page("streamlit/pages/flash_card.py")

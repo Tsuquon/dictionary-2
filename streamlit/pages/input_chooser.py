@@ -162,7 +162,7 @@ def render_button():
                 st.session_state.progress_value = 0
         # st.write("Button clicked!")
             print(st.session_state.testing_options)
-            st.switch_page("flash_card.py")
+            st.switch_page("streamlit/pages/flash_card.py")
             
 def alternate_render_button():
     if st.button("Submit"):
@@ -170,7 +170,7 @@ def alternate_render_button():
             st.error("Lower chapter number must be lower than higher chapter number")
         else:
             st.session_state.dialogue = []
-            st.switch_page("transcription.py")
+            st.switch_page("streamlit/pages/transcription.py")
 
 # session state definitions
 if "translation_type" not in st.session_state:
