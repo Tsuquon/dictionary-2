@@ -1,14 +1,19 @@
 from openai import OpenAI
 from llm_response_format import LLMResponseFormat, ConversationResponse
 from gtts import gTTS
-import os
+import st
 import pygame
 
 def play_audio(audio_file, volume=0.2):
-    pygame.mixer.init()
-    pygame.mixer.music.load(audio_file)
-    pygame.mixer.music.set_volume(volume)
-    pygame.mixer.music.play()
+    try:
+        pygame.mixer.init()
+        pygame.mixer.music.load(audio_file)
+        pygame.mixer.music.set_volume(volume)
+        pygame.mixer.music.play()
+    except Exception as e:
+        print(e)
+        st.warning("Error playing audio - streamlit doesn't natively support audio playback without the player. Will find a workaround soon :)") 
+        
 
 # this is google's api for simple text to speech
 def convert_to_audio(my_text, language='ja'):
